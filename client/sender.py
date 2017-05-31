@@ -28,6 +28,7 @@ class Sender():
             if status == 0:
                 print('ADSL Successfully')
                 ip = self.get_ip()
+                global ip_list
                 ip_list.append(ip)
                 if ip and len(ip_list) > 1 and ip != ip_list[-1]:
                     print('New IP', ip)
