@@ -7,9 +7,10 @@ from client.config import *
 import requests
 from requests.exceptions import ConnectionError
 
-ip_list = []
 class Sender():
-
+    def __init__(self):
+        self.count = 0
+        self.ip_list = ["a"]
 
     def get_ip(self, ifname=ADSL_IFNAME):
         (status, output) = subprocess.getstatusoutput('ifconfig')
@@ -20,24 +21,26 @@ class Sender():
                 ip = result.group(1)
                 return ip
 
-
     def adsl(self):
         while True:
             print('ADSL Start, Please wait')
             (status, output) = subprocess.getstatusoutput(ADSL_BASH)
             if status == 0:
                 print('ADSL Successfully')
-                ip = self.get_ip()
-                global ip_list
-                ip_list.append(ip)
-                if ip and len(ip_list) > 1 and ip != ip_list[-1]:
-                    print('New IP', ip)
-                    try:
-                        requests.post(SERVER_URL, data={'token': TOKEN, 'port': PROXY_PORT, 'name': CLIENT_NAME})
-                        print('Successfully Sent to Server', SERVER_URL)
-                    except ConnectionError:
-                        print('Failed to Connect Server', SERVER_URL)
-                    time.sleep(ADSL_CYCLE)
+                ip = self.get_ip()            
+                if ip :
+                    self.ip_list.append(ip)
+                    self.count += 1
+                    if ip != self.ip_list[-2]:
+                        print('New IP', ip)
+                        try:
+                            requests.post(SERVER_URL, data={'token': TOKEN, 'port': PROXY_PORT, 'name': CLIENT_NAME})
+                            print('Successfully Sent to Server', SERVER_URL)
+                        except ConnectionError:
+                            print('Failed to Connect Server', SERVER_URL)
+                        time.sleep(ADSL_CYCLE)
+                    else:
+                        print("IP is same as lastone")                        
                 else:
                     print('Get IP Failed')
             else:
