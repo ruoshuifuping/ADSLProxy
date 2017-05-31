@@ -42,7 +42,7 @@ class Sender():
                     print('Get IP Failed')
             else:
                 print('ADSL Failed, Please Check')
-            time.sleep(30)
+            time.sleep(60)
 
 
 def run():
