@@ -7,7 +7,7 @@ from client.config import *
 import requests
 from requests.exceptions import ConnectionError
 
-
+ip_list = []
 class Sender():
 
 
@@ -28,7 +28,8 @@ class Sender():
             if status == 0:
                 print('ADSL Successfully')
                 ip = self.get_ip()
-                if ip:
+                ip_list.append(ip)
+                if ip and len(ip_list) > 1 and ip != ip_list[-1]:
                     print('New IP', ip)
                     try:
                         requests.post(SERVER_URL, data={'token': TOKEN, 'port': PROXY_PORT, 'name': CLIENT_NAME})
@@ -40,7 +41,7 @@ class Sender():
                     print('Get IP Failed')
             else:
                 print('ADSL Failed, Please Check')
-            time.sleep(1)
+            time.sleep(30)
 
 
 def run():
